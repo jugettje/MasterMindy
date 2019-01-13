@@ -181,7 +181,7 @@ void checkCode()
 void printResult()
 {
 	TransmitString("amout of correct places: ");
-	TransmitByte('0' + currentResult.correctLocattions);
+	TransmitByte('0' + currentResult.correctLocations);
 	TransmitString("\r\n");
 	_delay_ms(100);
 	TransmitString("amout of wrong placed correct numbers: ");
@@ -325,7 +325,7 @@ void clearLists()
 		userCodeHistory[i].number2 = 0;
 		userCodeHistory[i].number3 = 0;
 		userCodeHistory[i].number4 = 0;
-		userResultHistory[i].correctLocattions = 0;
+		userResultHistory[i].correctLocations = 0;
 		userResultHistory[i].correctNumbes = 0;
 	}
 }
