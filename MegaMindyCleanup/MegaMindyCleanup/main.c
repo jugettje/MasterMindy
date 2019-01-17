@@ -15,12 +15,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <util/delay.h>
+#include "infoLeds.h"
 
 int main(void)
 {
 	initMasterMind();
 	InitUART(MYUBRR);
-	
+	initTimers();
 	sei();
 	
 	turns = 12;

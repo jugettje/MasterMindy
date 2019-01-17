@@ -10,6 +10,7 @@
 #include "JR_Macros.h"
 #include <util/delay.h>
 #include <stdio.h>
+#include "infoLeds.h"
 
 //Reset pin interrupt
 ISR(PCINT0_vect)
@@ -24,6 +25,9 @@ ISR(PCINT0_vect)
 		}
 		//reset the history
 		clearLists();
+		//clear timer for LED
+		turnTimer1Off();
+		turnTimer2Off();
 		//fill the secret code struct with random numbers
 		generateRandomCode(&secretCode1);
 		//for debugging: print the generated code
@@ -54,8 +58,6 @@ ISR(TIMER0_COMPA_vect)
 	else
 	{
 		cnt = 0;
-		//blink a led to indicate the random seed update rate
-		BIT_FLIP_IN_REG(PORTB, PORTB0);
 		counter++;
 	}
 }
@@ -180,6 +182,9 @@ void checkCode()
 
 void printResult()
 {
+	resetLeds();
+	setLeds();
+	timer2_Frequency(5);
 	TransmitString("amout of correct places: ");
 	TransmitByte('0' + currentResult.correctLocations);
 	TransmitString("\r\n");
@@ -272,9 +277,11 @@ int getUserCode(const char * _inputString)
 void checkTurn()
 {
 	userCodeHistory[11 -turns ] = userInputCode;
-	userResultHistory[11 - turns ] = currentResult;
+	userResultHistory[11 - turns ].correctLocations = currentResult.correctLocations;
+	userResultHistory[11 - turns ].correctNumbes = currentResult.correctNumbes;
 	if(currentResult.correctLocations == 4)
 	{
+		timer1_Frequency(1);
 		TransmitString("You won the game!!\r\n");
 		_delay_ms(100);
 		printHistory();
@@ -302,6 +309,7 @@ void checkTurn()
 	
 	if (turns == 0)
 	{
+		timer1_Frequency(20);
 		TransmitString("\r\n");
 		printHistory();
 		_delay_ms(100);
@@ -332,10 +340,11 @@ void clearLists()
 
 void printHistory()
 {
+	TransmitString("CP = correct placed, WP = wrong placed\r\n");
 	for(int i = 0; i < 12 - turns; i++)
 	{
 		char buffer[30];
-		sprintf(buffer, "%s%d%s%d%d%d%d\r\n", "turn ", i + 1, " you played: ",
+		sprintf(buffer, "%s%d%s%d%d%d%d\r\n", "turn ", i + 1, ": \tyou played: ",
 				userCodeHistory[i].number1, userCodeHistory[i].number2, userCodeHistory[i].number3, userCodeHistory[i].number4);
 		TransmitString(buffer);
 		_delay_ms(100);
