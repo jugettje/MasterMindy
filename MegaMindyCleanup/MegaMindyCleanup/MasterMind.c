@@ -183,8 +183,9 @@ void checkCode()
 void printResult()
 {
 	resetLeds();
-	setLeds();
-	timer2_Frequency(5);
+	//setLeds();
+	setLedSetting();
+	timer1_Frequency(5);
 	TransmitString("amout of correct places: ");
 	TransmitByte('0' + currentResult.correctLocations);
 	TransmitString("\r\n");
@@ -281,7 +282,7 @@ void checkTurn()
 	userResultHistory[11 - turns ].correctNumbes = currentResult.correctNumbes;
 	if(currentResult.correctLocations == 4)
 	{
-		timer1_Frequency(1);
+		timer2_Frequency(1);
 		TransmitString("You won the game!!\r\n");
 		_delay_ms(100);
 		printHistory();
@@ -309,7 +310,7 @@ void checkTurn()
 	
 	if (turns == 0)
 	{
-		timer1_Frequency(20);
+		timer2_Frequency(2);
 		TransmitString("\r\n");
 		printHistory();
 		_delay_ms(100);
@@ -341,6 +342,7 @@ void clearLists()
 void printHistory()
 {
 	TransmitString("CP = correct placed, WP = wrong placed\r\n");
+	_delay_ms(100);
 	for(int i = 0; i < 12 - turns; i++)
 	{
 		char buffer[30];
@@ -361,4 +363,28 @@ void printInfo()
 	checkTurn();
 	TransmitString("\r\n\r\n");
 	//ReceiveByte();
+}
+
+void setLedSetting()
+{
+	pinStates[0]=0;
+	pinStates[1]=0;
+	pinStates[2]=0;
+	pinStates[3]=0;
+	int maxLEds = 4;
+	int ledsLeft = maxLEds - currentResult.correctLocations;
+	for(int i = 0; i < currentResult.correctLocations; i++)
+	{
+		pinStates[i]=1;
+	}
+	if(ledsLeft > 0)
+	{
+		for(int i = currentResult.correctLocations; i < (currentResult.correctLocations + currentResult.correctNumbes) && i < 4; i++)
+		{
+			pinStates[i]=2;
+		}
+	}
+	char bufferSTR[10];
+	sprintf(bufferSTR, "%d %d %d %d\r\n", pinStates[0], pinStates[1], pinStates[2], pinStates[3]);
+	TransmitString(bufferSTR);
 }
