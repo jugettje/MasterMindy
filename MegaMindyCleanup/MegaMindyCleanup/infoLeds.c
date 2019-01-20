@@ -37,7 +37,7 @@ ISR(TIMER1_COMPA_vect)
 
 ISR(TIMER2_OVF_vect)
 {
-	static int count = 0;
+	static double count = 0;
 	if(count < 30 && LED_setting == 1)
 	{
 		count ++;
@@ -48,9 +48,9 @@ ISR(TIMER2_OVF_vect)
 		count = 0;
 	}
 	
-	if(count < 150 && LED_setting == 2)
+	if(count < 1.5 && LED_setting == 2)
 	{
-		count +=100;
+		count += 0.75;
 	}
 	else if (LED_setting == 2)
 	{
@@ -136,6 +136,7 @@ void turnTimer1Off()
 {
 	BIT_OFF_IN_REG(TCCR1B, CS12);
 	OCR1A = 0;
+	resetLeds();
 }
 
 void resetLeds()

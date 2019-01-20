@@ -28,8 +28,8 @@ int main(void)
 	turns = 12;
 	resetPressed = 0;
 	reset = 0;
-	//char _TMP = UCSR0A;
-	//while (!_TMP !=  !(1<<TXC0));
+	//waitToPrint();
+	_delay_ms(100);
 	TransmitString("Press reset to start the game...\r\n");
     while (1) 
     {
@@ -38,11 +38,13 @@ int main(void)
 		{
 			//print some basic information
 			_delay_ms(100);
+			//4waitToPrint();
 			resetUart1();
 			TransmitString("@------------------@\r\n");
 			sprintf(formatString, "%s%d\r\n", "turns left : ", turns);
 			TransmitString(formatString);
 			_delay_ms(100);
+			//waitToPrint();
 			TransmitString("input code: ");
 			//make sure reset is not set
 			//if it is set you can't get input

@@ -13,14 +13,17 @@ ISR(USART_UDRE_vect)
 {
 	unsigned char tmptail;
 	/* Check if all data is transmitted */
-	if (UART_TxHead != UART_TxTail) {
+	if (UART_TxHead != UART_TxTail) 
+	{
 		/* Calculate buffer index */
 		tmptail = ( UART_TxTail + 1 ) & UART_TX_BUFFER_MASK;
 		/* Store new index */
 		UART_TxTail = tmptail;
 		/* Start transmission */
 		UDR0 = UART_TxBuf[tmptail];
-		} else {
+	}
+	else 
+	{
 		/* Disable UDRE interrupt */
 		UCSR0B &= ~(1<<UDRIE0);
 	}
@@ -43,6 +46,12 @@ ISR(USART_RX_vect)
 	UART_RxBuf[tmphead] = data;
 }
 
+ISR(USART_TX_vect)
+{
+	//TransmitByte('A');
+	
+}
+
 /* Initialize UART */
 void InitUART(unsigned int ubrr_val)
 {
@@ -51,7 +60,8 @@ void InitUART(unsigned int ubrr_val)
 	UBRR0H = (unsigned char)(ubrr_val>>8);
 	UBRR0L = (unsigned char)ubrr_val;
 	/* Enable UART receiver and transmitter */
-	UCSR0B = ((1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0));
+	//UCSR0A |= (1<<U2X0);
+	UCSR0B = ((1<<RXEN0) | (1<<TXEN0) | (1<<RXCIE0) | (1<<TXCIE0));
 	/* Flush receive buffer */
 	x = 0;
 	UART_RxTail = x;
@@ -132,6 +142,7 @@ void TransmitString(char *str)
 	while(*str)
 	{
 		TransmitByte(*str++);
+		//while( ( UCSR0A & ( 1 << UDRE0 ) ) == 0 ){}
 	}
 }
 
@@ -144,3 +155,8 @@ void resetUart1()
 	UART_TxHead = x;
 }
 
+void waitToPrint()
+{
+	//char _TMP = UCSR0A & (1<<UDRE0);
+	while( ( UCSR0A & ( 1 << UDRE0 ) ) ){}
+}

@@ -10,6 +10,7 @@
 #include "JR_Macros.h"
 #include <util/delay.h>
 #include <stdio.h>
+#include <string.h>
 
 
 //Reset pin interrupt
@@ -38,13 +39,13 @@ ISR(PCINT0_vect)
 		TransmitByte('0' + secretCode1.number4);
 		TransmitString("\r\n");
 		//TransmitString("New game stared\r\n");
-		
 		//reset the turns
 		turns = 12;
 		//allow main program to run again
 		resetPressed = 1;
 	}
 }
+
 
 /*Timer 0 cmp A interrupt
  *use for the random generator
@@ -222,10 +223,12 @@ void printResult()
 	TransmitByte('0' + currentResult.correctLocations);
 	TransmitString("\r\n");
 	_delay_ms(100);
+	//waitToPrint();
 	TransmitString("amout of wrong placed correct numbers: ");
 	TransmitByte('0' + currentResult.correctNumbes);
 	TransmitString("\r\n");
 	_delay_ms(100);
+	//waitToPrint();
 	turns --;
 }
 
@@ -376,17 +379,25 @@ void printHistory()
 {
 	TransmitString("CP = correct placed, WP = wrong placed\r\n");
 	_delay_ms(100);
+	//waitToPrint();
 	for(int i = 0; i < 12 - turns; i++)
 	{
 		char buffer[30];
-		sprintf(buffer, "%s%d%s%d%d%d%d\r\n", "turn ", i + 1, ": \tyou played: ",
+		sprintf(buffer, "%s%d%s%d%d%d%d", "turn ", i + 1, ": \tyou played: ",
 				userCodeHistory[i].number1, userCodeHistory[i].number2, userCodeHistory[i].number3, userCodeHistory[i].number4);
-				//" CP: ", userResultHistory[i].correctLocations,
-				//" WP: ", userResultHistory[i].correctNumbes);
 		TransmitString(buffer);
 		_delay_ms(100);
+		//waitToPrint();
+		memset(&buffer[0], 0, sizeof(buffer));
+		sprintf(buffer, "%s%d%s%d\r\n",
+		" CP: ", userResultHistory[i].correctLocations,
+		" WP: ", userResultHistory[i].correctNumbes);
+		TransmitString(buffer);
+		_delay_ms(100);
+		//waitToPrint();
 	}
 	_delay_ms(100);
+	//waitToPrint();
 }
 
 void printInfo()

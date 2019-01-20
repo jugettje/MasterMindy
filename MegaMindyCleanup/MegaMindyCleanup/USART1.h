@@ -40,5 +40,6 @@ void TransmitByte(char data);
 void ReceiveString(char *str);
 void TransmitString(char *str);
 void resetUart1();
+//void waitToPrint();
 
 #endif /* USART1_H_ */
