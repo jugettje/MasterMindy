@@ -25,6 +25,6 @@ volatile char PORTB_Pins[4];
 volatile char PINB_Pins[4];
 volatile int pinStates[4];
 volatile int LED_counter;
-volatile int LED_setting;
+volatile static int LED_setting;
 
 #endif /* INFOLEDS_H_ */

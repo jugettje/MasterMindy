@@ -23,12 +23,14 @@ int main(void)
 	InitUART(MYUBRR);
 	initTimers();
 	sei();
+	TransmitString("DEBUG: initialising done\r\n");
 	
 	turns = 12;
 	resetPressed = 0;
 	reset = 0;
-	
-	TransmitString("Press reset to start the game\r\n");
+	//char _TMP = UCSR0A;
+	//while (!_TMP !=  !(1<<TXC0));
+	TransmitString("Press reset to start the game...\r\n");
     while (1) 
     {
 		//don't start the game until reset is pressed

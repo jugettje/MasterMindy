@@ -10,7 +10,7 @@
 #include "JR_Macros.h"
 #include <util/delay.h>
 #include <stdio.h>
-#include "infoLeds.h"
+
 
 //Reset pin interrupt
 ISR(PCINT0_vect)
@@ -100,9 +100,11 @@ void generateRandomCode(mm_code_t * _code)
 //checks if the user input is the same as the code
 void checkCode()
 {
+	
 	//make sure the mm_result_t struct currentResult is empty
 	currentResult.correctLocations = 0;
 	currentResult.correctNumbes = 0;
+	mm_numberUsed_t usedNumbers = {0,0,0,0};
 	//add 1 to correctLocations for every correct number on the correct place
 	if(secretCode1.number1 == userInputCode.number1)
 	{
@@ -124,60 +126,90 @@ void checkCode()
 	
 	//add 1 to correctNumbers for every correct number on the wrong place
 	// check 1 to 2, 3, 4
-	if(userInputCode.number1 == secretCode1.number2)
+	if(userInputCode.number1 == secretCode1.number2
+		&& !usedNumbers.nr1Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr1Used = 1;
 	}
-	if(userInputCode.number1 == secretCode1.number3)
+	if(userInputCode.number1 == secretCode1.number3
+		&& !usedNumbers.nr1Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr1Used = 1;
 	}
-	if(userInputCode.number1 == secretCode1.number4)
+	if(userInputCode.number1 == secretCode1.number4
+		&& !usedNumbers.nr1Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr1Used = 1;
 	}
 	
 	// check 2 to 1, 3, 4
-	if(userInputCode.number2 == secretCode1.number1)
+	if(userInputCode.number2 == secretCode1.number1
+		&& !usedNumbers.nr2Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr2Used = 1;
 	}
-	if(userInputCode.number2 == secretCode1.number3)
+	if(userInputCode.number2 == secretCode1.number3
+		&& !usedNumbers.nr2Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr2Used = 1;
 	}
-	if(userInputCode.number2 == secretCode1.number4)
+	if(userInputCode.number2 == secretCode1.number4
+		&& !usedNumbers.nr2Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr2Used = 1;
 	}
 	
 	// check 3 to 1, 2, 4
-	if(userInputCode.number3 == secretCode1.number1)
+	if(userInputCode.number3 == secretCode1.number1
+		&& !usedNumbers.nr3Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr3Used = 1;
 	}
-	if(userInputCode.number3 == secretCode1.number2)
+	if(userInputCode.number3 == secretCode1.number2
+		&& !usedNumbers.nr3Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr3Used = 1;
 	}
-	if(userInputCode.number3 == secretCode1.number4)
+	if(userInputCode.number3 == secretCode1.number4
+		&& !usedNumbers.nr3Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr3Used = 1;
 	}
 	
 	// check 4 to 1, 2, 3
-	if(userInputCode.number4 == secretCode1.number1)
+	if(userInputCode.number4 == secretCode1.number1
+		&& !usedNumbers.nr4Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr4Used = 1;
 	}
-	if(userInputCode.number4 == secretCode1.number2)
+	if(userInputCode.number4 == secretCode1.number2
+		&& !usedNumbers.nr4Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr4Used = 1;
 	}
-	if(userInputCode.number4 == secretCode1.number3)
+	if(userInputCode.number4 == secretCode1.number3
+		&& !usedNumbers.nr4Used)
 	{
 		currentResult.correctNumbes += 1;
+		usedNumbers.nr4Used = 1;
 	}
+	
+	if(currentResult.correctLocations + currentResult.correctNumbes > 4)
+	{
+		currentResult.correctNumbes = 4 - currentResult.correctLocations;
+	}
+	
 }
 
 void printResult()
@@ -296,8 +328,9 @@ void checkTurn()
 			sprintf(buffer, "%s%d%s\r\n", "you did it in ", 12 - turns, " turns");
 		}
 		TransmitString(buffer);
-		_delay_ms(100);
+		_delay_ms(150);
 		TransmitString("press reset to start again\r\n");
+		_delay_ms(150);
 		resetPressed = 0;
 	}
 	
@@ -348,9 +381,12 @@ void printHistory()
 		char buffer[30];
 		sprintf(buffer, "%s%d%s%d%d%d%d\r\n", "turn ", i + 1, ": \tyou played: ",
 				userCodeHistory[i].number1, userCodeHistory[i].number2, userCodeHistory[i].number3, userCodeHistory[i].number4);
+				//" CP: ", userResultHistory[i].correctLocations,
+				//" WP: ", userResultHistory[i].correctNumbes);
 		TransmitString(buffer);
 		_delay_ms(100);
 	}
+	_delay_ms(100);
 }
 
 void printInfo()

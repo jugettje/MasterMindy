@@ -11,6 +11,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <time.h>
+#include "infoLeds.h"
 
 typedef struct mm_code_t
 {
@@ -26,6 +27,14 @@ typedef struct mm_result_t
 	int correctLocations;
 	int correctNumbes;
 }mm_result_t;
+
+typedef struct mm_numberUsed_t
+{
+	int nr1Used;
+	int nr2Used;
+	int nr3Used;
+	int nr4Used;
+}mm_numberUsed_t;
 
 mm_code_t secretCode1;
 mm_code_t userInputCode;
