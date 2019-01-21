@@ -3,6 +3,10 @@
  *
  * Created: 13-1-2019 15:04:51
  * Author : jurgen
+ * 
+ * @ TODO: CHANGE THE DELAYS!!!
+ * @	 : find another way for sprintf(); stdio.h is way too big.
+ * @ 	 : 
  */ 
 
 #include <avr/io.h>
@@ -19,17 +23,23 @@
 
 int main(void)
 {
+	// initialise all sub parts. sets the registers.
 	initMasterMind();
 	InitUART(MYUBRR);
 	initTimers();
-	sei();
-	TransmitString("DEBUG: initialising done\r\n");
 	
+	//enable interrupts
+	sei();
+	
+	//TransmitString("DEBUG: initialising done\r\n");
+	
+	//initialise global variables
 	turns = 12;
 	resetPressed = 0;
 	reset = 0;
+	//---------------------------
 	//waitToPrint();
-	_delay_ms(100);
+	_delay_ms(100); // <- CHANGE THIS!!
 	TransmitString("Press reset to start the game...\r\n");
     while (1) 
     {
@@ -37,13 +47,13 @@ int main(void)
 		if(resetPressed)
 		{
 			//print some basic information
-			_delay_ms(100);
-			//4waitToPrint();
+			_delay_ms(100); // <- CHANGE THIS!!
+			//waitToPrint();
 			resetUart1();
 			TransmitString("@------------------@\r\n");
 			sprintf(formatString, "%s%d\r\n", "turns left : ", turns);
 			TransmitString(formatString);
-			_delay_ms(100);
+			_delay_ms(100); // <- CHANGE THIS!!
 			//waitToPrint();
 			TransmitString("input code: ");
 			//make sure reset is not set
