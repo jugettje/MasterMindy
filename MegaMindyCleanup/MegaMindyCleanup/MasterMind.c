@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 //Reset pin interrupt
 ISR(PCINT0_vect)
 {
@@ -46,10 +45,9 @@ ISR(PCINT0_vect)
 	}
 }
 
-
-/*Timer 0 cmp A interrupt
+/*Timer 0 comp A interrupt
  *use for the random generator
-*/
+ */
 ISR(TIMER0_COMPA_vect)
 {
 	if(cnt < 200)
@@ -68,9 +66,9 @@ void initMasterMind()
 {
 	/* set interrupt to trigger when timer = OCIE0A
 	 * set operation mode to ctc
-	 * set the prescaler to 64
+	 * the prescaler will be set to 64 (if we start the timer)
 	 * freq = F_CPU / (2 * 64 * 250 )
-	 * 1/freq = 1/500 s
+	 * 1/freq = 1/500 seconds
 	 * 200 loops for 1 puls so * 200
 	 * 1/((1 / 500) * 200) = 2,5 Hz
 	*/
@@ -206,6 +204,7 @@ void checkCode()
 		usedNumbers.nr4Used = 1;
 	}
 	
+	// make sure the correct locations don't go above 4
 	if(currentResult.correctLocations + currentResult.correctNumbes > 4)
 	{
 		currentResult.correctNumbes = 4 - currentResult.correctLocations;
@@ -213,6 +212,7 @@ void checkCode()
 	
 }
 
+//prints the result of this turn
 void printResult()
 {
 	resetLeds();
@@ -222,16 +222,21 @@ void printResult()
 	TransmitString("amout of correct places: ");
 	TransmitByte('0' + currentResult.correctLocations);
 	TransmitString("\r\n");
-	_delay_ms(100);
+	_delay_ms(100);  // <- CHANGE THIS!!
 	//waitToPrint();
 	TransmitString("amout of wrong placed correct numbers: ");
 	TransmitByte('0' + currentResult.correctNumbes);
 	TransmitString("\r\n");
-	_delay_ms(100);
+	_delay_ms(100); // <- CHANGE THIS!!
 	//waitToPrint();
+	
+	
+	//@---- turn ends here.. calculate different from here ----@
 	turns --;
+	//@--------------------------------------------------------@
 }
 
+//check the user input if it is a digit. if it is make sure it is 0 > num > 7
 int getUserCode(const char * _inputString)
 {
 	int correctInput = 1;
@@ -300,16 +305,27 @@ int getUserCode(const char * _inputString)
 		correctInput = 0;
 	}
 	
+	//if the user did something wrong
 	if (!correctInput)
 	{
 		
 		TransmitString("only use the numbers 1 <-> 6  \r\n");
 		//TransmitString("try again\r\n");
 	}
+	//save the code
 	userInputCode = inputCode;
+	
+	//return the value 1 if the input was valid so the do{} while() loop in main will stop
 	return correctInput;
 }
 
+/* compares the input of the user code to the secret code
+ * if you win or lose it will reset the the "resetPressed" to 0
+ * this stops the "main loop"( not main() ) from going on.
+ * to make it start again you need to press the reset button.
+ * if you did not win or lose the "main loop" ( not main() )
+ * will continue.
+ */
 void checkTurn()
 {
 	userCodeHistory[11 -turns ] = userInputCode;
@@ -319,7 +335,7 @@ void checkTurn()
 	{
 		timer2_Frequency(1);
 		TransmitString("You won the game!!\r\n");
-		_delay_ms(100);
+		_delay_ms(100); // <- CHANGE THIS!!
 		printHistory();
 		char buffer[40];
 		if(12 - turns == 1)
@@ -331,9 +347,9 @@ void checkTurn()
 			sprintf(buffer, "%s%d%s\r\n", "you did it in ", 12 - turns, " turns");
 		}
 		TransmitString(buffer);
-		_delay_ms(150);
+		_delay_ms(150); // <- CHANGE THIS!!
 		TransmitString("press reset to start again\r\n");
-		_delay_ms(150);
+		_delay_ms(150); // <- CHANGE THIS!!
 		resetPressed = 0;
 	}
 	
@@ -349,19 +365,20 @@ void checkTurn()
 		timer2_Frequency(2);
 		TransmitString("\r\n");
 		printHistory();
-		_delay_ms(100);
+		_delay_ms(100); // <- CHANGE THIS!!
 		TransmitString("winning code was : ");
 		TransmitByte('0' + secretCode1.number1);
 		TransmitByte('0' + secretCode1.number2);
 		TransmitByte('0' + secretCode1.number3);
 		TransmitByte('0' + secretCode1.number4);
 		TransmitString("\r\n");
-		_delay_ms(100);
+		_delay_ms(100); // <- CHANGE THIS!!
 		TransmitString("you lose press reset to try again\r\n");
 		resetPressed = 0;
 	}
 }
 
+//if the player resets the game, all the data can be deleted
 void clearLists()
 {
 	for(int i = 0; i < 12; i++)
@@ -375,10 +392,11 @@ void clearLists()
 	}
 }
 
+//print all the data stored in the user data arrays.
 void printHistory()
 {
 	TransmitString("CP = correct placed, WP = wrong placed\r\n");
-	_delay_ms(100);
+	_delay_ms(100);  // <- CHANGE THIS!!
 	//waitToPrint();
 	for(int i = 0; i < 12 - turns; i++)
 	{
@@ -386,20 +404,22 @@ void printHistory()
 		sprintf(buffer, "%s%d%s%d%d%d%d", "turn ", i + 1, ": \tyou played: ",
 				userCodeHistory[i].number1, userCodeHistory[i].number2, userCodeHistory[i].number3, userCodeHistory[i].number4);
 		TransmitString(buffer);
-		_delay_ms(100);
+		_delay_ms(100);  // <- CHANGE THIS!!
 		//waitToPrint();
 		memset(&buffer[0], 0, sizeof(buffer));
 		sprintf(buffer, "%s%d%s%d\r\n",
 		" CP: ", userResultHistory[i].correctLocations,
 		" WP: ", userResultHistory[i].correctNumbes);
 		TransmitString(buffer);
-		_delay_ms(100);
+		_delay_ms(100);  // <- CHANGE THIS!!
 		//waitToPrint();
 	}
-	_delay_ms(100);
+	_delay_ms(100); // <- CHANGE THIS!!
 	//waitToPrint();
 }
 
+
+//function to print all the game data in the right order.
 void printInfo()
 {
 	TransmitString(codeInput);
@@ -412,6 +432,13 @@ void printInfo()
 	//ReceiveByte();
 }
 
+/* this function does all the work for the ISR(TIMER1_COMPA_vect)
+ * there are 2 arrays one with PORTB pins and one with integers
+ * the integer with the same index as a PINB pin tells something
+ * about what that pin is supposed to be doing. either blinking,
+ * turn on or turn off. this is done here so the isr is not taking 
+ * too long for no use.
+ *///move this function to infoLeds?
 void setLedSetting()
 {
 	pinStates[0]=0;
@@ -434,4 +461,21 @@ void setLedSetting()
 	char bufferSTR[10];
 	sprintf(bufferSTR, "%d %d %d %d\r\n", pinStates[0], pinStates[1], pinStates[2], pinStates[3]);
 	TransmitString(bufferSTR);
+}
+
+//print some basic information for this turn
+void printBasicInfo()
+{
+	_delay_ms(100); // <- CHANGE THIS!!
+	//waitToPrint();
+	resetUart1();
+	TransmitString("@------------------@\r\n");
+	sprintf(formatString, "%s%d\r\n", "turns left : ", turns);
+	TransmitString(formatString);
+	_delay_ms(100); // <- CHANGE THIS!!
+	//waitToPrint();
+	TransmitString("input code: ");
+	//make sure reset is not set
+	//if it is set you can't get input
+	reset = 0;
 }

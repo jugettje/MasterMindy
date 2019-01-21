@@ -17,7 +17,6 @@ void timer2_Frequency(int setting);
 void turnTimer1Off();
 void turnTimer2Off();
 void resetLeds();
-void setLeds();
 void setLedSetting();
 
 

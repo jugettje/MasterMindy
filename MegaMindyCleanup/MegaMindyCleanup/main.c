@@ -23,7 +23,7 @@
 
 int main(void)
 {
-	// initialise all sub parts. sets the registers.
+	// initialize all sub parts. sets the registers.
 	initMasterMind();
 	InitUART(MYUBRR);
 	initTimers();
@@ -31,9 +31,9 @@ int main(void)
 	//enable interrupts
 	sei();
 	
-	//TransmitString("DEBUG: initialising done\r\n");
+	//TransmitString("DEBUG: initializing done\r\n");
 	
-	//initialise global variables
+	//initialize global variables
 	turns = 12;
 	resetPressed = 0;
 	reset = 0;
@@ -46,21 +46,9 @@ int main(void)
 		//don't start the game until reset is pressed
 		if(resetPressed)
 		{
-			//print some basic information
-			_delay_ms(100); // <- CHANGE THIS!!
-			//waitToPrint();
-			resetUart1();
-			TransmitString("@------------------@\r\n");
-			sprintf(formatString, "%s%d\r\n", "turns left : ", turns);
-			TransmitString(formatString);
-			_delay_ms(100); // <- CHANGE THIS!!
-			//waitToPrint();
-			TransmitString("input code: ");
-			//make sure reset is not set
-			//if it is set you can't get input
-			reset = 0;
-			
-			//recieve a string
+			//print the basic info for this turn
+			printBasicInfo();
+			//receive a string
 			do
 			{
 				ReceiveString(codeInput);

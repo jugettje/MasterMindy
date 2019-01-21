@@ -1,3 +1,10 @@
+/*
+ * JR_Macros.h
+ *
+ * Created: 12-1-2019 15:30:21
+ *  Author: jurgen
+ */ 
+
 #ifndef JR_MACROS_H
 #define JR_MACROS_H
 
@@ -34,4 +41,4 @@
 #define BITS_7_OFF_IN_REG(REG, BIT_OFFSET1, BIT_OFFSET2, BIT_OFFSET3, BIT_OFFSET4, BIT_OFFSET5, BIT_OFFSET6, BIT_OFFSET7)		REG &= ~(1<<BIT_OFFSET1) | (1<<BIT_OFFSET2) | (1<<BIT_OFFSET3) | (1<<BIT_OFFSET4) | (1<<BIT_OFFSET5) | (1<<BIT_OFFSET6) | (1<<BIT_OFFSET7)
 
 
-#endif 
+#endif /* JR_MACROS_H_ */

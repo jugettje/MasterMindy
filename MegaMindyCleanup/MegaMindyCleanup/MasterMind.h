@@ -39,6 +39,7 @@ typedef struct mm_numberUsed_t
 mm_code_t secretCode1;
 mm_code_t userInputCode;
 mm_code_t userCodeHistory[12];
+
 mm_result_t currentResult;
 mm_result_t userResultHistory[12];
 
@@ -54,6 +55,7 @@ int getUserCode(const char * _inputString);
 void clearLists();
 void printHistory();
 void printInfo();
+void printBasicInfo();
 
 
 #endif /* MASTERMIND_H_ */

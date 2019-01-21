@@ -8,8 +8,8 @@
  * all the basic settings are set in the .h file.
  * and all the transmit and receive functions are defined
  * in the .c file.
- * these files can be used in other projects aswell.
- * only requires avr/io.h and avr/interrupt.h
+ * these files can be used in other projects as well.
+ * only requires avr/io.h and avr/interrupt.h and a F_CPU define
  */ 
 
 #include "USART1.h"
@@ -41,7 +41,7 @@ ISR(USART_UDRE_vect)
 }
 
 /* RX interrupt 
- * reads the incomming rx data and 
+ * reads the incoming rx data and 
  * places it in the rx buffer for the 
  * program to use the data
  */
@@ -122,7 +122,6 @@ void TransmitByte(char data)
 	UCSR0B |= (1<<UDRIE0);
 }
 
-
 /* This function gets a string of characters from the USART.
  * The string is placed in the array pointed to by str.
  *
@@ -147,7 +146,6 @@ void ReceiveString(char *str)
 	str[t] = '\0';
 }
 
-
 /* Transmits a string of characters to the USART.
  * The string must be terminated with '\0'.
  *
@@ -164,7 +162,6 @@ void TransmitString(char *str)
 	}
 }
 
-
 /* resets the usart buffer;
  * both the tx and rx buffers
  */
@@ -177,9 +174,8 @@ void resetUart1()
 	UART_TxHead = x;
 }
 
-
 /* NOT WORKING
- * find a way to avaoid using _delay in the code
+ * find a way to avoid using _delay in the code
  * instead use the register info to know when to send
  * new data to the transmitString() function
  */
